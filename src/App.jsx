@@ -14,7 +14,7 @@ const [report, setReport] = useState(null);
       {/* الهيدر صار برا */}
      <header className="header">
   <div className="header-content">
-    <img src="/src/assets/ss.png" alt="Logo" className="header-logo"  />
+    <img src="/src/assets/logo.png" alt="Logo" className="header-logo"  />
     {/* <h1 className="title">تحليل المشية</h1> */}
   </div>
 </header>
