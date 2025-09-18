@@ -75,7 +75,7 @@ body {
 }
 
 .header-logo {
-  height: 200px;     /* 🔥 عدّل الرقم حسب الطول اللي تبغاه */
+  height: 200px;     
   width: auto;
   object-fit: contain;
   display: block; 
