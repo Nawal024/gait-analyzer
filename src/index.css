@@ -1,0 +1,348 @@
+:root {
+  --bg-dark: #0b1020;
+  --bg-card: #131b36;
+  --bg-card-hover: #1a254b;
+  --bg-btn: #283368;
+  --bg-btn-hover: #3a49a1;
+  --text-light: #e9edf5;
+  --accent: #4facfe;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --radius: 12px;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* background: linear-gradient(-45deg, #0b1020, #1b1f36, #283368, #4facfe); */
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: #f5e9eb;
+   direction: rtl;     /* الاتجاه من اليمين لليسار */
+  text-align: right;  /* محاذاة النص لليمين */
+}
+.bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;       /* خلف كل المحتوى */
+}
+
+.bg-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* يغطي الشاشة بدون تشويه */
+  filter: blur(3px);
+}
+
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.app-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 16px;
+}
+
+.header {
+  width: 100%;
+  /* background: linear-gradient(135deg, #1f2a55, #32407a); */
+  padding: 20px;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  color: white;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center; /* يوسّط المحتوى في الهيدر */
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* مسافة بين الصورة والعنوان */
+}
+
+.header-logo {
+  height: 200px;     /* 🔥 عدّل الرقم حسب الطول اللي تبغاه */
+  width: auto;
+  object-fit: contain;
+  display: block; 
+  margin-left: 20px;
+}
+
+
+.title {
+  margin: 0;           /* يشيل المسافات الافتراضية */
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+    justify-content: center; /* يوسّط المحتوى */
+  gap: 8px;
+}
+
+.badge {
+  padding: 6px 14px;
+  background: #1f2a55;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 2fr 2fr;
+   align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid #1b2450;
+  box-shadow: 0 12px 24px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+}
+
+.kpis {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 600px) {
+  .kpis {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kpi {
+  background: #0f1530;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  text-align: center;
+  box-shadow: 0 6px 18px var(--shadow);
+}
+
+.kpi h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.kpi .val {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 20px var(--shadow);
+}
+
+video,
+canvas {
+  width: 100%;
+  display: block;
+  border-radius: var(--radius);
+  background: #000;
+}
+
+.controls-row {
+  display: flex;
+  justify-content: center; /* مركزية الأزرار */
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.btn {
+  background: var(--bg-btn);
+  border: none;
+  color: var(--text-light);
+  padding: 12px 20px;
+   min-width: 150px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1em;
+  box-shadow: 0 4px 14px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bg-btn-hover);
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn.secondary {
+  background: transparent;
+  border: 1px solid #2a3358;
+}
+
+.controls {
+  display: flex;
+  justify-content: center; /* مركزية الأزرار */
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px; /* مسافة واضحة بين الأزرار */
+  margin-top: 20px;
+}
+
+.note {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-top: 8px;
+}
+
+.hint {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.hint-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none; /* نشيل النقاط العادية */
+  line-height: 1.9;
+}
+
+.hint-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;            /* مسافة بين الأيقونة والنص */
+  margin: 6px 0;
+}
+
+.icon {
+  font-size: 1.4em;    /* حجم الأيقونة */
+}
+
+.icon.blue { color: #4facfe; }
+.icon.green { color: #e7f687; }
+.icon.orange { color: #ffa94d; }
+.icon.purple { color: #845ef7; }
+
+/* ألوان مختلفة لكل أيقونة */
+.icon.cam {
+  color: #4facfe; /* أزرق */
+}
+.icon.light {
+  color: #ffd93b; /* أصفر */
+}
+.icon.body {
+  color: #ff6b6b; /* أحمر */
+}
+.icon.steps {
+  color: #51cf66; /* أخضر */
+}
+
+
+/* تنسيقات جديدة للتقرير */
+.report-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+    background-color: #2a335a;
+    border-radius: 8px;
+}
+
+.report-item {
+    background-color: #1b244d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.report-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #90caf9;
+}
+
+.report-status {
+    font-weight: bold;
+    font-size: 0.9em;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background-color: #4CAF50; /* لون افتراضي للحالة */
+}
+
+/* يمكن تغيير الألوان بناءً على حالة المقياس */
+.report-status.warning {
+    background-color: #FFC107;
+}
+
+.report-value {
+    margin: 0;
+    font-size: 1.1em;
+    color: #f0f0f0;
+}
+
+.report-notes {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #1b244d;
+    border-radius: 8px;
+    font-style: italic;
+    color: #ccc;
+}
+
+.report-notes h4 {
+    margin: 0 0 10px 0;
+    color: #90caf9;
+    font-style: normal;
+}
+
+.small {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.card h2 {
+  text-align: center;   
+   font-size: 30px; 
+}
