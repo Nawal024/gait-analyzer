@@ -3,7 +3,7 @@ import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-backend-webgl';
 import * as poseDetection from '@tensorflow-models/pose-detection';
 
-import { drawPose } from '../utils/drawing';
+import { drawPose, setupCanvas } from '../utils/drawing';
 import { computeFrameMetrics, initAccumulator, pushFrame, summarize, buildReport } from '../utils/gaitMetrics';
 
 const FPS = 30;
@@ -80,12 +80,15 @@ export default function PoseAnalyzer({ onReport, onKpis }) {
     resizeCanvasToVideo();
   }
 
-  function resizeCanvasToVideo() {
-    const v = videoRef.current, c = canvasRef.current;
-    if (!v || !c) return;
-    c.width = v.videoWidth;
-    c.height = v.videoHeight;
-  }
+ function resizeCanvasToVideo() {
+  const v = videoRef.current, c = canvasRef.current;
+  if (!v || !c) return;
+  // ضبط أبعاد العنصر نفسه
+  c.style.width = v.videoWidth + "px";
+  c.style.height = v.videoHeight + "px";
+  // تهيئة canvas بدقة الشاشة
+  setupCanvas(c);
+}
 
   function stopCameraTracks() {
     const v = videoRef.current;
