@@ -69,7 +69,7 @@ body {
 }
 
 .header-logo {
-  height: 120px;
+  height: 180px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -319,4 +319,24 @@ canvas {
 .card h2 {
   text-align: center;   
    font-size: 30px; 
+}
+
+@media (max-width: 600px) {
+  .header-logo {
+    height: 90px;
+  }
+
+  .app-container {
+    padding: 16px 16px 16px 8px; /* مسافة من الجوانب */
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .card {
+    padding: 14px 8px; /* تقليل الحشو الداخلي */
+    margin-bottom: 14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--shadow);
+  }
 }
