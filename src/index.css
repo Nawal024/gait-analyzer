@@ -53,7 +53,7 @@ body {
 .app-container {
   max-width: 1200px;
   margin: 20px auto;
-  padding: 16px;
+  padding: 0 20px; 
 }
 
 .header {
@@ -66,6 +66,7 @@ body {
   display: flex;
   justify-content: center; /* يوسّط اللوجو أفقياً */
   align-items: center;      /* يوسّط اللوجو عمودياً */
+    text-align: center
 }
 
 .header-logo {
@@ -327,7 +328,7 @@ canvas {
   }
 
   .app-container {
-    padding: 16px 16px 16px 8px; /* مسافة من الجوانب */
+    padding: 5px; /* مسافة من الجوانب */
     margin: 0 auto;
     width: 100%;
     max-width: 100vw;
@@ -338,5 +339,20 @@ canvas {
     margin-bottom: 14px;
     border-radius: 10px;
     box-shadow: 0 4px 12px var(--shadow);
+     width: 93%;           /* يخلي الكارد أضيق من الشاشة */
+    margin: 0 auto 16px;
+  }
+
+    .hint-list li {
+    display: block;      /* كل نصيحة في سطر مستقل */
+    margin-bottom: 8px;  /* مسافة بين النصائح */
+    line-height: 1.6;    /* مسافة سطور مريحة */
+  }
+
+  /* الأيقونة تبقى موجودة لكن بدون flex */
+  .hint-list li .icon {
+    display: inline;     /* تظل مع النص بدون مشاكل */
+    margin-left: 6px;    /* مسافة بسيطة بين الأيقونة والنص */
+    font-size: 1.2em;
   }
 }

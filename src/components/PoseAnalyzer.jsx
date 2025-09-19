@@ -274,7 +274,7 @@ export default function PoseAnalyzer({ onReport, onKpis }) {
           <ul className="hint-list">
             <li>
               <span className="icon cam">📷</span>
-              ضع الكاميرا من <strong>الجانب (Side view)</strong> على بُعد <strong>2.5 – 4 م</strong>
+              ضع الكاميرا من <strong>الجانب (Side view)</strong> على بُعد <strong>2.5 – 4 أمتار</strong>
             </li>
             <li>
               <span className="icon light">💡</span>
