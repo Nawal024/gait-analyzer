@@ -304,6 +304,8 @@ canvas {
     border-radius: 8px;
     font-style: italic;
     color: #ccc;
+    white-space: pre-wrap; /* يحافظ على الأسطر الجديدة */
+  line-height: 2.5;  
 }
 
 .report-notes h4 {
