@@ -351,10 +351,29 @@ canvas {
     line-height: 1.6;    /* مسافة سطور مريحة */
   }
 
-  /* الأيقونة تبقى موجودة لكن بدون flex */
+ 
   .hint-list li .icon {
     display: inline;     /* تظل مع النص بدون مشاكل */
     margin-left: 6px;    /* مسافة بسيطة بين الأيقونة والنص */
     font-size: 1.2em;
   }
+  footer {
+    width: 100vw;
+    margin: 0;
+    padding: 14px 0;
+    position: relative;
+    left: 50%;
+    right: 0;
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important; /* يمنع أي تمرير أفقي */
+  }
+
 }
