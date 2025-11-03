@@ -4,6 +4,8 @@ import PoseAnalyzer from './components/PoseAnalyzer';
 // استيراد الأيقونات
 import { CadenceIcon, TrunkIcon, SymmetryIcon } from './utils/Icons';
 import { GiKneeCap } from "react-icons/gi";
+import Footer from './components/Footer';
+
 
 export default function App() {
 const [report, setReport] = useState(null);
@@ -84,6 +86,6 @@ const [report, setReport] = useState(null);
         </div>
       </main>
     </div>
-        </>
+      <Footer />    </>
   );
 }
