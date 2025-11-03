@@ -196,7 +196,7 @@ export default function PoseAnalyzer({ onReport, onKpis }) {
           <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '1.5em' }}>
             اختر مصدر الفيديو
           </h3>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
+          <div className="video-source-buttons" style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
             <label
               style={{
                 display: 'flex',
