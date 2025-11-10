@@ -167,7 +167,7 @@ export default function StrideSymmetryChart({ leftStepLength, rightStepLength })
   }}
 >
   <img
-    src="/src/assets/cramp.png"
+    src="cramp.png"
     alt="تماثل طول الخطوة"
     style={{ width: "30px", height: "30px" }}
   />
