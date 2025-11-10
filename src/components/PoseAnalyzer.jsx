@@ -9,7 +9,7 @@ import { computeFrameMetrics, initAccumulator, pushFrame, summarize, buildReport
 const FPS = 30;
 
 // إضافة onKpis كـ prop
-export default function PoseAnalyzer({ onReport, onKpis }) {
+export default function PoseAnalyzer({ onReport, onKpis, onKneeDataUpdate }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const detectorRef = useRef(null);
@@ -85,6 +85,11 @@ export default function PoseAnalyzer({ onReport, onKpis }) {
     if (!v || !c) return;
     c.width = v.videoWidth;
     c.height = v.videoHeight;
+
+      // اضبط عامل التحويل في accumulator (100cm ≈ عرض الفيديو)
+  if (accRef.current) {
+    accRef.current.pxToCm = v.videoWidth ? (100 / v.videoWidth) : null;
+  }
   }
 
   function stopCameraTracks() {
@@ -122,17 +127,63 @@ export default function PoseAnalyzer({ onReport, onKpis }) {
       const fm = computeFrameMetrics(poses[0].keypoints);
       pushFrame(accRef.current, fm);
 
+      // إضافة سجل زوايا الركبة الحالية للمكوّن الأب (App.jsx)
+    const currentKneeData = {
+      left: fm.leftKnee,
+      right: fm.rightKnee,
+      frame: accRef.current.frames // رقم الإطار
+  };
+  if (onKneeDataUpdate) { // دالة جديدة لإرسال بيانات الزوايا
+      onKneeDataUpdate(currentKneeData);
+  }
+
       const s = summarize(accRef.current, FPS);
       setKpis({
         cadence: s.cadence != null ? `${s.cadence}` : '-',
-        knees: (s.leftKneeAvg != null && s.rightKneeAvg != null)
-          ? `${s.leftKneeAvg.toFixed(0)}° / ${s.rightKneeAvg.toFixed(0)}°`
-          : '-',
-        trunk: s.trunkLeanAvg != null ? `${s.trunkLeanAvg.toFixed(1)}°` : '-',
-        symmetry: s.symmetry != null ? `${s.symmetry.toFixed(0)}%` : '-'
-      });
+        // عرض أقصى انثناء إذا متوفر، وإلا عرض المتوسط
+        knees: (s.leftKneeMaxFlexion != null && s.rightKneeMaxFlexion != null)
+          ? `${s.leftKneeMaxFlexion.toFixed(0)}° / ${s.rightKneeMaxFlexion.toFixed(0)}°`
+          : (s.leftKneeAvg != null && s.rightKneeAvg != null)
+            ? `${s.leftKneeAvg.toFixed(0)}° / ${s.rightKneeAvg.toFixed(0)}°`
+            : '-',
+        trunk: (s.maxTrunkLean != null) ? `${s.maxTrunkLean.toFixed(1)}°` : (s.trunkLeanAvg != null ? `${s.trunkLeanAvg.toFixed(1)}°` : '-'),
+        symmetry: s.symmetry != null ? `${s.symmetry.toFixed(0)}%` : '-',
+        strideSymmetry: s.strideSymmetry != null ? `${s.strideSymmetry.toFixed(0)}%` : '-',
+
+     // الحقول العددية الجديدة (بالسم) لتستخدمها App.jsx مباشرة
+  leftStepLength: s.leftStepAvgCm != null ? s.leftStepAvgCm : null,
+  rightStepLength: s.rightStepAvgCm != null ? s.rightStepAvgCm : null,
+  stepSymmetryPercent: s.stepSymmetryPercent != null ? s.stepSymmetryPercent : null,
+});
+      
     } else {
     }
+
+    // 🔹 حساب طول الخطوة (المسافة الأفقية بين القدمين)
+const leftAnkle = poses[0].keypoints.find(p => p.name === "left_ankle");
+const rightAnkle = poses[0].keypoints.find(p => p.name === "right_ankle");
+
+if (leftAnkle && rightAnkle) {
+  const stepLength = Math.abs(leftAnkle.x - rightAnkle.x); // بالبكسل
+
+  // تحويل البكسل إلى سم (تقديريًا حسب حجم الإطار)
+  const stepLengthCm = (stepLength / videoRef.current.videoWidth) * 100; 
+
+  // تمريرها لـ App.jsx عبر onKpis
+  if (onKpis) {
+    onKpis({
+      cadence: kpis.cadence,
+      knees: kpis.knees,
+      trunk: kpis.trunk,
+      symmetry: kpis.symmetry,
+      strideSymmetry: kpis.strideSymmetry,
+      leftStepLength: leftAnkle.x < rightAnkle.x ? stepLengthCm : kpis.leftStepLength,
+      rightStepLength: rightAnkle.x > leftAnkle.x ? stepLengthCm : kpis.rightStepLength,
+    });
+  }
+  
+}
+
   }
 
   async function startAnalysis() {

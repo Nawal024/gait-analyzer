@@ -5,12 +5,59 @@ import PoseAnalyzer from './components/PoseAnalyzer';
 import { CadenceIcon, TrunkIcon, SymmetryIcon } from './utils/Icons';
 import { GiKneeCap } from "react-icons/gi";
 import Footer from './components/Footer';
+import KneeAngleTrendChart from "./components/KneeAngleTrendChart";
+import StrideSymmetryChart from "./components/StrideSymmetryChart";
+
 
 
 export default function App() {
 const [report, setReport] = useState(null);
   // حالة جديدة لحفظ المقاييس
   const [kpis, setKpis] = useState({ cadence: '-', knees: '-', trunk: '-', symmetry: '-' });
+
+  const [kneeChartData, setKneeChartData] = useState([]);
+  const [strideSymmetryData, setStrideSymmetryData] = useState([]); // 🆕 لحفظ بيانات تماثل سعة الحركة
+  const [stepData, setStepData] = useState({ leftStepLength: 0, rightStepLength: 0 }); // 🆕 أطوال الخطوة اليمنى واليسرى
+
+
+
+  const handleKneeDataUpdate = (data) => {
+    // تخزين فقط الزوايا التي لها قيمة (ليست null)
+    if (data.left !== null || data.right !== null) {
+        setKneeChartData(prevData => [...prevData, data]);
+    }
+  };
+
+  // 🆕 متابعة تحديثات مقياس تماثل سعة الحركة
+React.useEffect(() => {
+  if (kpis.strideSymmetry && kpis.strideSymmetry !== '-') {
+    setStrideSymmetryData(prev => [
+      ...prev,
+      { frame: prev.length + 1, value: parseFloat(kpis.strideSymmetry) }
+    ]);
+  }
+}, [kpis.strideSymmetry]);
+
+  // **********************************
+  
+  // دالة تحضير بيانات الرسم البياني
+  const chartConfig = {
+    labels: kneeChartData.map(d => d.frame), // محوّر X: رقم الإطار
+    datasets: [
+      {
+        label: 'الركبة اليسرى',
+        data: kneeChartData.map(d => d.left),
+        borderColor: '#4facfe',
+        tension: 0.4, // لجعل الخط منحنيًا
+      },
+      {
+        label: 'الركبة اليمنى',
+        data: kneeChartData.map(d => d.right),
+        borderColor: '#ff6b6b',
+        tension: 0.4,
+      }
+    ],
+  };
   return (
     <>
       {/* الهيدر صار برا */}
@@ -27,7 +74,20 @@ const [report, setReport] = useState(null);
       <main className="grid">
         <div className="card">
           {/* تمرير دالة تحديث المقاييس إلى PoseAnalyzer */}
-          <PoseAnalyzer onReport={setReport} onKpis={setKpis} />
+          <PoseAnalyzer
+  onReport={setReport}
+  onKpis={(newKpis) => {
+    setKpis(newKpis);
+ if (newKpis.leftStepLength != null && newKpis.rightStepLength != null) {      setStepData({
+        leftStepLength: newKpis.leftStepLength,
+        rightStepLength: newKpis.rightStepLength,
+      });
+    }
+  }}
+  onKneeDataUpdate={handleKneeDataUpdate}
+/>
+
+
           <p className="note">
             ⚠️ هذا تحليل مبدئي وليس تشخيصًا. لتحليل طبي دقيق، راجع طبيب متخصص.
           </p>
@@ -44,7 +104,7 @@ const [report, setReport] = useState(null);
               <div className="val">{kpis.cadence}</div>
             </div>
             <div className="kpi">
-              <GiKneeCap className="icon green" size={38} style={{ marginBottom: '12px' }}/>
+              <GiKneeCap className="icon green" size={30} />
               <h4>زاوية الركبة</h4>
               <div className="val">{kpis.knees}</div>
             </div>
@@ -83,6 +143,24 @@ const [report, setReport] = useState(null);
               <p>ابدأ التحليل وسيظهر التقرير هنا.</p>
             )}
           </div>
+
+<div className="stride-symmetry-section">
+    <h3>👣 تحليل تماثل طول الخطوة</h3>
+
+    {/* الرسم البياني لتماثل الخطوة */}
+    <StrideSymmetryChart
+      leftStepLength={stepData.leftStepLength}
+      rightStepLength={stepData.rightStepLength}
+    />
+
+    {/* الجملة تظهر فقط قبل بدء التحليل */}
+    {stepData.leftStepLength === 0 && stepData.rightStepLength === 0 && (
+      <p className="placeholder-text">
+        ابدأ التحليل لعرض تماثل طول الخطوة بين الساقين.
+      </p>
+    )}
+  </div>
+
         </div>
       </main>
     </div>

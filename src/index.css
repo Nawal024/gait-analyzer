@@ -106,10 +106,34 @@ body {
 }
 
 .kpis {
-  display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
+
+.kpi {
+  flex: 1;
+  background: #0f1530;
+  border-radius: var(--radius);
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 6px 18px var(--shadow);
+}
+
+.kpi h4 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.kpi .val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
 
 @media (max-width: 600px) {
   .kpis {
@@ -200,10 +224,20 @@ canvas {
 }
 
 .note {
-  font-size: 13px;
-  opacity: 0.8;
-  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #b0c7ff; /* لون أزرق فاتح مريح للعين */
+  background: rgba(20, 25, 40, 0.6); /* خلفية شفافة داكنة */
+  border-left: 3px solid #4fa3ff; /* شريط جانبي ناعم */
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  line-height: 1.6;
+  font-family: "Poppins", sans-serif;
+  backdrop-filter: blur(6px); /* يعطي تأثير زجاجي أنيق */
+  box-shadow: 0 0 10px rgba(79, 163, 255, 0.2); /* نيون أزرق خفيف */
 }
+
 
 .hint {
   font-size: 14px;
@@ -298,21 +332,22 @@ canvas {
 }
 
 .report-notes {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #1b244d;
-    border-radius: 8px;
-    font-style: italic;
-    color: #ccc;
-    white-space: pre-wrap; /* يحافظ على الأسطر الجديدة */
-  line-height: 2.5;  
+  margin-top: 10px;
+  padding: 10px 12px;
+  background-color: #1b244d;
+  border-radius: 8px;
+  font-style: italic;
+  color: #ccc;
+  white-space: pre-wrap;
+  line-height: 2;
 }
 
 .report-notes h4 {
-    margin: 0 0 10px 0;
-    color: #90caf9;
-    font-style: normal;
+  margin: 0 0 8px 0;
+  color: #90caf9;
+  font-style: normal;
 }
+
 
 .small {
   font-size: 12px;
@@ -352,7 +387,7 @@ canvas {
     border-radius: 10px;
     box-shadow: 0 4px 12px var(--shadow);
   }
-  
+
   .video-source-buttons {
     flex-direction: column !important;
     align-items: center !important;
@@ -390,7 +425,18 @@ canvas {
     backdrop-filter: blur(6px);
     box-sizing: border-box;
   }
+  
+  .kpis {
+    display: flex;
+    flex-wrap: wrap; /* يسمح بالالتفاف */
+    justify-content: center;
+    gap: 12px;
+  }
 
+  .kpi {
+    flex: 1 1 calc(50% - 12px); /* كل عنصر يأخذ نصف العرض تقريباً */
+    min-width: 130px; /* يمنعها تصغر كثير */
+  }
   html, body {
     margin: 0 !important;
     padding: 0 !important;

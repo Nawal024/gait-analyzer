@@ -1,5 +1,5 @@
 import React from "react";
-import { FaLaptopCode,FaCode, FaEnvelope } from "react-icons/fa"; // استيراد الأيقونات من مكتبة react-icons
+import { FaLaptopCode, FaCode, FaEnvelope, FaLightbulb } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -9,13 +9,12 @@ const Footer = () => {
         backdropFilter: "blur(6px)",
         color: "white",
         textAlign: "center",
-        padding: "5px 0",
+        padding: "10px 0",
         marginTop: "30px",
-        // fontFamily: "Tajawal, sans-serif",
         fontSize: "18px",
       }}
     >
-    
+      {/* Project name */}
       <p
         style={{
           marginBottom: "8px",
@@ -25,32 +24,52 @@ const Footer = () => {
           gap: "6px",
         }}
       >
-        <FaCode style={{ color: "#00d9ff", fontSize: "18px" }} />
-        <span style={{ direction: "ltr" }}> تحليل المشي &copy; 2025</span>
+       
+        <span style={{ direction: "ltr" }}>Gait Analysis &copy; 2025</span>
+         <FaCode style={{ color: "#00d9ff", fontSize: "18px" }} />
       </p>
 
- 
-<p style={{
-  marginBottom: "8px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  gap: "6px"
-}}>
-  <FaLaptopCode style={{ color: "#00d9ff", fontSize: "17px" }} />
-  <span>تصميم وتطوير: <strong>نـوال الزبيدي</strong></span>
-</p>
-     
+
+      {/* Design & Development */}
       <p
         style={{
-            marginBottom: "8px",
+          marginBottom: "8px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           gap: "6px",
         }}
       >
-        <FaEnvelope style={{ color: "#00d9ff", fontSize: "16px" }} />
+        <span>Design & Development by : <strong>Nawal Alzubidi</strong></span>
+                <FaLaptopCode style={{ color: "#00d9ff", fontSize: "28px" }} />
+
+      </p>
+
+         {/* Idea */}
+      <p
+        style={{
+          marginBottom: "8px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        
+        <span>Idea : <strong>Fatimah Almuaydi</strong></span>
+        <FaLightbulb style={{ color: "#00d9ff", fontSize: "17px" }} />
+      </p>
+
+      {/* Email */}
+      <p
+        style={{
+          marginBottom: "8px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
         <a
           href="mailto:nawalalzubaidi4@gmail.com"
           style={{
@@ -60,6 +79,8 @@ const Footer = () => {
         >
           nawalalzubaidi4@gmail.com
         </a>
+                <FaEnvelope style={{ color: "#00d9ff", fontSize: "16px" }} />
+
       </p>
     </footer>
   );
