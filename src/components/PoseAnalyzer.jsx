@@ -118,6 +118,20 @@ export default function PoseAnalyzer({ onReport, onKpis, onKneeDataUpdate }) {
     const c = canvasRef.current;
     if (!v || !detectorRef.current || v.readyState < 2) return;
 
+      // 🧠 تعيين مقياس ثابت لتحويل البكسل إلى سم
+  if (accRef.current) {
+    accRef.current.pxToCm = 0.1; // كل 10 بكسل ≈ 1 سم (يمكنك تعديله)
+  }
+
+  // 🧩 دالة لتنعيم القيم قبل التحليل لتقليل الضجيج
+  function smoothArray(arr, windowSize = 5) {
+    return arr.map((_, i, a) => {
+      const slice = a.slice(Math.max(0, i - windowSize), i + windowSize + 1).filter(v => v != null);
+      return slice.length ? slice.reduce((s, x) => s + x, 0) / slice.length : null;
+    });
+  }
+
+
     const poses = await detectorRef.current.estimatePoses(v, { flipHorizontal: false });
     const ctx = c.getContext('2d');
     ctx.clearRect(0, 0, c.width, c.height);
@@ -126,6 +140,34 @@ export default function PoseAnalyzer({ onReport, onKpis, onKneeDataUpdate }) {
       drawPose(ctx, poses[0].keypoints, 0.45);
       const fm = computeFrameMetrics(poses[0].keypoints);
       pushFrame(accRef.current, fm);
+
+        // 🦵 تنعيم إحداثيات الكاحلين قبل حساب القمم
+  const smoothL = smoothArray(accRef.current.ankleHistL || []);
+  const smoothR = smoothArray(accRef.current.ankleHistR || []);
+
+  // 🔍 إيجاد القمم بعد التنعيم (لو عندك دالة findPeaks جاهزة في gaitMetrics)
+  if (typeof findPeaks === "function" && accRef.current) {
+    const peaksL = findPeaks(smoothL);
+    const peaksR = findPeaks(smoothR);
+
+    // ⚙️ حساب متوسط طول الخطوة بدقة
+    const avgLeft = calcAverageStepLength(peaksL, accRef.current.pxToCm);
+    const avgRight = calcAverageStepLength(peaksR, accRef.current.pxToCm);
+
+    // 💡 حساب التماثل بنسبة مئوية دقيقة
+    const symmetry =
+      avgLeft && avgRight
+        ? (Math.min(avgLeft, avgRight) / Math.max(avgLeft, avgRight)) * 100
+        : 0;
+
+    setKpis(prev => ({
+      ...prev,
+      leftStepLength: avgLeft ? avgLeft.toFixed(1) : prev.leftStepLength,
+      rightStepLength: avgRight ? avgRight.toFixed(1) : prev.rightStepLength,
+      strideSymmetry: symmetry ? symmetry.toFixed(1) : prev.strideSymmetry,
+    }));
+  }
+
 
       // إضافة سجل زوايا الركبة الحالية للمكوّن الأب (App.jsx)
     const currentKneeData = {
