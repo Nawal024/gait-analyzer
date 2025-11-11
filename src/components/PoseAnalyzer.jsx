@@ -112,6 +112,36 @@ export default function PoseAnalyzer({ onReport, onKpis, onKneeDataUpdate }) {
     rafRef.current = requestAnimationFrame(loop);
     await analyzeFrame();
   }
+// 🔹 دوال مساعدة دقيقة لتماثل الخطوة
+function smoothArray(arr, windowSize = 8) {
+  const result = [];
+  for (let i = 0; i < arr.length; i++) {
+    const start = Math.max(0, i - Math.floor(windowSize / 2));
+    const end = Math.min(arr.length, i + Math.floor(windowSize / 2) + 1);
+    const window = arr.slice(start, end).filter(v => v != null);
+    result.push(window.length ? window.reduce((a, b) => a + b, 0) / window.length : null);
+  }
+  return result;
+}
+
+function findPeaks(data, threshold = 2) {
+  const peaks = [];
+  for (let i = 1; i < data.length - 1; i++) {
+    if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {
+      peaks.push(i);
+    }
+  }
+  return peaks;
+}
+
+function calcAverageStepLength(peaks, pxToCm) {
+  if (!peaks || peaks.length < 2) return 0;
+  const diffs = [];
+  for (let i = 1; i < peaks.length; i++) {
+    diffs.push(Math.abs(peaks[i] - peaks[i - 1]) * pxToCm);
+  }
+  return diffs.reduce((a, b) => a + b, 0) / diffs.length;
+}
 
   async function analyzeFrame() {
     const v = videoRef.current;
@@ -137,36 +167,39 @@ export default function PoseAnalyzer({ onReport, onKpis, onKneeDataUpdate }) {
     ctx.clearRect(0, 0, c.width, c.height);
 
     if (poses?.[0]?.keypoints) {
+      // 🧠 تثبيت pxToCm ديناميكيًا من طول الجسم (تحويل بكسل إلى سم)
+const keypoints = poses[0].keypoints;
+const nose = keypoints.find(p => p.name === "nose");
+const leftAnkle = keypoints.find(p => p.name === "left_ankle");
+if (nose && leftAnkle && nose.score > 0.4 && leftAnkle.score > 0.4) {
+  const bodyHeightPx = Math.abs(nose.y - leftAnkle.y);
+  accRef.current.pxToCm = 170 / bodyHeightPx; // نفترض طول 170 سم
+}
+
       drawPose(ctx, poses[0].keypoints, 0.45);
       const fm = computeFrameMetrics(poses[0].keypoints);
       pushFrame(accRef.current, fm);
 
-        // 🦵 تنعيم إحداثيات الكاحلين قبل حساب القمم
-  const smoothL = smoothArray(accRef.current.ankleHistL || []);
-  const smoothR = smoothArray(accRef.current.ankleHistR || []);
+      // 🦵 تحليل تماثل الخطوة بدقة بين الساقين
+const smoothL = smoothArray(accRef.current.ankleHistL || []);
+const smoothR = smoothArray(accRef.current.ankleHistR || []);
 
-  // 🔍 إيجاد القمم بعد التنعيم (لو عندك دالة findPeaks جاهزة في gaitMetrics)
-  if (typeof findPeaks === "function" && accRef.current) {
-    const peaksL = findPeaks(smoothL);
-    const peaksR = findPeaks(smoothR);
+const peaksL = findPeaks(smoothL);
+const peaksR = findPeaks(smoothR);
 
-    // ⚙️ حساب متوسط طول الخطوة بدقة
-    const avgLeft = calcAverageStepLength(peaksL, accRef.current.pxToCm);
-    const avgRight = calcAverageStepLength(peaksR, accRef.current.pxToCm);
+// حساب متوسط طول الخطوة (سم)
+const avgLeft = calcAverageStepLength(peaksL, accRef.current.pxToCm);
+const avgRight = calcAverageStepLength(peaksR, accRef.current.pxToCm);
 
-    // 💡 حساب التماثل بنسبة مئوية دقيقة
-    const symmetry =
-      avgLeft && avgRight
-        ? (Math.min(avgLeft, avgRight) / Math.max(avgLeft, avgRight)) * 100
-        : 0;
+// التماثل بنسبة مئوية دقيقة
+const symmetry = avgLeft && avgRight ? 100 * (1 - Math.abs(avgLeft - avgRight) / Math.max(avgLeft, avgRight)) : 0;
 
-    setKpis(prev => ({
-      ...prev,
-      leftStepLength: avgLeft ? avgLeft.toFixed(1) : prev.leftStepLength,
-      rightStepLength: avgRight ? avgRight.toFixed(1) : prev.rightStepLength,
-      strideSymmetry: symmetry ? symmetry.toFixed(1) : prev.strideSymmetry,
-    }));
-  }
+setKpis(prev => ({
+  ...prev,
+  leftStepLength: avgLeft ? avgLeft.toFixed(1) : prev.leftStepLength,
+  rightStepLength: avgRight ? avgRight.toFixed(1) : prev.rightStepLength,
+  strideSymmetry: symmetry ? symmetry.toFixed(1) : prev.strideSymmetry,
+}));
 
 
       // إضافة سجل زوايا الركبة الحالية للمكوّن الأب (App.jsx)
